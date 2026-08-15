@@ -134,51 +134,59 @@ class HM_Widget_Updates extends Widget_Base {
 
 		$this->end_controls_section();
 
-		/* -- Split layout images -- */
+		/* -- Split layout media slots -- */
 		$this->start_controls_section(
 			'section_images',
 			array(
-				'label'     => __( 'תמונות (פריסת פיצול)', 'hadashot-mercaz' ),
+				'label'     => __( 'משבצות מדיה (פריסת פיצול)', 'hadashot-mercaz' ),
 				'tab'       => Controls_Manager::TAB_CONTENT,
 				'condition' => array( 'layout' => 'split' ),
 			)
 		);
 
+		$layout_sets  = class_exists( 'HM_Layout_Set' ) ? HM_Layout_Set::get_all() : array();
+		$set_options  = array( '' => __( '— בחרו ערכת פריסה —', 'hadashot-mercaz' ) );
+		foreach ( $layout_sets as $set ) {
+			$set_options[ $set->ID ] = $set->post_title ? $set->post_title : ( '#' . $set->ID );
+		}
+
 		$this->add_control(
-			'image_1',
+			'layout_set_id',
 			array(
-				'label'   => __( 'תמונה ימנית', 'hadashot-mercaz' ),
-				'type'    => Controls_Manager::MEDIA,
-				'default' => array( 'url' => \Elementor\Utils::get_placeholder_image_src() ),
+				'label'       => __( 'ערכת פריסה', 'hadashot-mercaz' ),
+				'type'        => Controls_Manager::SELECT,
+				'options'     => $set_options,
+				'default'     => '',
+				'description' => __( 'תוכן המשבצות (עמודת מדיה ימין/שמאל) מנוהל במסך "ערכות פריסה" בתפריט הניהול של וורדפרס. בחירה כאן תשלוף את אותו התוכן בדיוק — עדכון שם משתקף כאן מיד.', 'hadashot-mercaz' ),
 			)
 		);
 
-		$this->add_control(
-			'image_1_link',
-			array(
-				'label'       => __( 'קישור לתמונה הימנית (אופציונלי)', 'hadashot-mercaz' ),
-				'type'        => Controls_Manager::URL,
-				'label_block' => true,
-			)
-		);
+		if ( empty( $layout_sets ) ) {
+			$this->add_control(
+				'layout_set_missing_notice',
+				array(
+					'type'    => Controls_Manager::RAW_HTML,
+					'raw'     => sprintf(
+						'<div class="hm-elementor-notice">%s</div><a class="hm-panel-slot-edit-link" href="%s" target="_blank" rel="noopener">%s</a>',
+						esc_html__( 'עדיין לא נוצרה אף ערכת פריסה.', 'hadashot-mercaz' ),
+						esc_url( admin_url( 'post-new.php?post_type=' . HM_LAYOUT_SET_POST_TYPE ) ),
+						esc_html__( '+ יצירת ערכת פריסה חדשה', 'hadashot-mercaz' )
+					),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				)
+			);
+		}
 
-		$this->add_control(
-			'image_2',
-			array(
-				'label'   => __( 'תמונה שמאלית', 'hadashot-mercaz' ),
-				'type'    => Controls_Manager::MEDIA,
-				'default' => array( 'url' => \Elementor\Utils::get_placeholder_image_src() ),
-			)
-		);
-
-		$this->add_control(
-			'image_2_link',
-			array(
-				'label'       => __( 'קישור לתמונה השמאלית (אופציונלי)', 'hadashot-mercaz' ),
-				'type'        => Controls_Manager::URL,
-				'label_block' => true,
-			)
-		);
+		foreach ( $layout_sets as $set ) {
+			$this->add_control(
+				'layout_set_preview_' . $set->ID,
+				array(
+					'type'      => Controls_Manager::RAW_HTML,
+					'raw'       => HM_Layout_Set::render_admin_preview_html( $set->ID ),
+					'condition' => array( 'layout_set_id' => (string) $set->ID ),
+				)
+			);
+		}
 
 		$this->end_controls_section();
 
@@ -462,12 +470,12 @@ class HM_Widget_Updates extends Widget_Base {
 		$this->add_responsive_control(
 			'split_image_height',
 			array(
-				'label'     => __( 'גובה תמונה', 'hadashot-mercaz' ),
+				'label'     => __( 'גובה משבצת', 'hadashot-mercaz' ),
 				'type'      => Controls_Manager::SLIDER,
 				'range'     => array( 'px' => array( 'min' => 100, 'max' => 800 ) ),
 				'default'   => array( 'unit' => 'px', 'size' => 360 ),
 				'selectors' => array(
-					'{{WRAPPER}} .hm-split-image img' => 'height: {{SIZE}}{{UNIT}}; width: 100%; object-fit: cover;',
+					'{{WRAPPER}} .hm-split-image img, {{WRAPPER}} .hm-split-image video' => 'height: {{SIZE}}{{UNIT}}; width: 100%; object-fit: cover;',
 				),
 			)
 		);
@@ -475,11 +483,11 @@ class HM_Widget_Updates extends Widget_Base {
 		$this->add_control(
 			'split_image_radius',
 			array(
-				'label'     => __( 'עיגול פינות תמונה', 'hadashot-mercaz' ),
+				'label'     => __( 'עיגול פינות משבצת', 'hadashot-mercaz' ),
 				'type'      => Controls_Manager::SLIDER,
 				'range'     => array( 'px' => array( 'max' => 40 ) ),
 				'selectors' => array(
-					'{{WRAPPER}} .hm-split-image img' => 'border-radius: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .hm-split-image img, {{WRAPPER}} .hm-split-image video' => 'border-radius: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);
@@ -955,6 +963,66 @@ class HM_Widget_Updates extends Widget_Base {
 	/* ------------------------------------------------------------------ */
 	/*  SHARED TEMPLATE HELPERS                                           */
 	/* ------------------------------------------------------------------ */
+
+	/**
+	 * Renders one split-layout media slot (right or left) from resolved
+	 * HM_Layout_Set::get_slot() data — an image, an autoplaying video, or a
+	 * click-to-play video (uploaded or embedded).
+	 */
+	public function render_media_slot( $slot, $side ) {
+		if ( ! $slot ) {
+			return;
+		}
+
+		$classes = array( 'hm-split-image', 'hm-split-image-' . $side );
+		$link    = ! empty( $slot['link'] ) ? $slot['link'] : '';
+
+		if ( 'image' === $slot['type'] ) {
+			?>
+			<div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>">
+				<?php if ( $link ) : ?><a href="<?php echo esc_url( $link ); ?>"><?php endif; ?>
+				<img src="<?php echo esc_url( $slot['url'] ); ?>" alt="">
+				<?php if ( $link ) : ?></a><?php endif; ?>
+			</div>
+			<?php
+			return;
+		}
+
+		if ( ! empty( $slot['is_embed'] ) ) {
+			$embed     = wp_oembed_get( $slot['url'] );
+			$classes[] = 'hm-clicktoplay';
+			?>
+			<div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" data-hm-video-slot="embed">
+				<div class="hm-split-video-poster">
+					<span class="hm-play-btn" aria-hidden="true">▶</span>
+				</div>
+				<?php if ( $embed ) : ?>
+					<div class="hm-split-video-embed" hidden><?php echo $embed; ?></div>
+				<?php endif; ?>
+			</div>
+			<?php
+			return;
+		}
+
+		if ( $slot['autoplay'] ) {
+			?>
+			<div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>">
+				<?php if ( $link ) : ?><a href="<?php echo esc_url( $link ); ?>"><?php endif; ?>
+				<video src="<?php echo esc_url( $slot['url'] ); ?>" autoplay muted loop playsinline></video>
+				<?php if ( $link ) : ?></a><?php endif; ?>
+			</div>
+			<?php
+			return;
+		}
+
+		$classes[] = 'hm-clicktoplay';
+		?>
+		<div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" data-hm-video-slot="upload">
+			<video src="<?php echo esc_url( $slot['url'] ); ?>" muted playsinline preload="metadata"></video>
+			<span class="hm-play-btn" aria-hidden="true">▶</span>
+		</div>
+		<?php
+	}
 
 	public function render_popup_shell( $widget_uid ) {
 		?>

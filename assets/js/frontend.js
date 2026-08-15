@@ -153,6 +153,33 @@
 		wrap.addEventListener( 'touchstart', stopAutoplay, { passive: true } );
 	}
 
+	function initClickToPlay( root ) {
+		var slots = root.querySelectorAll( '.hm-clicktoplay' );
+		Array.prototype.forEach.call( slots, function ( slot ) {
+			slot.addEventListener( 'click', function () {
+				if ( slot.classList.contains( 'is-playing' ) ) {
+					return;
+				}
+				slot.classList.add( 'is-playing' );
+
+				if ( 'embed' === slot.getAttribute( 'data-hm-video-slot' ) ) {
+					var embedBox = slot.querySelector( '.hm-split-video-embed' );
+					if ( embedBox ) {
+						embedBox.hidden = false;
+					}
+					return;
+				}
+
+				var video = slot.querySelector( 'video' );
+				if ( video ) {
+					video.muted = false;
+					video.controls = true;
+					video.play();
+				}
+			} );
+		} );
+	}
+
 	function initRoot( root ) {
 		if ( ! root || root.getAttribute( 'data-hm-init' ) ) {
 			return;
@@ -160,6 +187,7 @@
 		root.setAttribute( 'data-hm-init', '1' );
 		initPopups( root );
 		initCarousel( root );
+		initClickToPlay( root );
 	}
 
 	function initAll( context ) {

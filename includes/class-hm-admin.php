@@ -24,6 +24,49 @@ class HM_Admin {
 		add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget' ) );
 		add_action( 'admin_menu', array( $this, 'add_help_page' ) );
 		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
+		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
+		add_filter( 'wp_editor_settings', array( $this, 'simplify_editor' ), 10, 2 );
+		add_action( 'add_meta_boxes', array( $this, 'reorder_meta_boxes' ), 999 );
+	}
+
+	/**
+	 * Keep updates on the classic editor: a quick text + media form, not a
+	 * block-based page builder.
+	 */
+	public function disable_block_editor( $use_block_editor, $post_type ) {
+		if ( HM_UPDATES_POST_TYPE === $post_type ) {
+			return false;
+		}
+		return $use_block_editor;
+	}
+
+	public function simplify_editor( $settings, $editor_id ) {
+		if ( 'content' !== $editor_id ) {
+			return $settings;
+		}
+		$screen = get_current_screen();
+		if ( ! $screen || HM_UPDATES_POST_TYPE !== $screen->post_type ) {
+			return $settings;
+		}
+		$settings['teeny']         = true;
+		$settings['media_buttons'] = false;
+		$settings['quicktags']     = true;
+		$settings['textarea_rows'] = 12;
+		return $settings;
+	}
+
+	/**
+	 * Move the media meta box directly under the content editor so the whole
+	 * "text + media" form reads top-to-bottom instead of being scattered.
+	 */
+	public function reorder_meta_boxes() {
+		global $wp_meta_boxes;
+		if ( empty( $wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high']['hm_media_meta'] ) ) {
+			return;
+		}
+		$box = $wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high']['hm_media_meta'];
+		unset( $wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high']['hm_media_meta'] );
+		$wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high'] = array( 'hm_media_meta' => $box ) + $wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high'];
 	}
 
 	public function enqueue( $hook ) {
@@ -134,17 +177,17 @@ class HM_Admin {
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-megaphone"></div>
 					<h2><?php esc_html_e( '1. יצירת עדכונים', 'hadashot-mercaz' ); ?></h2>
-					<p><?php esc_html_e( 'עברו ל"כל העדכונים" ולחצו על "הוספת עדכון". הזינו כותרת ותוכן מלא, בחרו תמונה ראשית, ואם רוצים – הוסיפו קטגוריה, אודיו ו/או וידאו בתיבת המדיה שבתחתית העמוד.', 'hadashot-mercaz' ); ?></p>
-				</div>
-				<div class="hm-guide-card">
-					<div class="hm-guide-icon dashicons dashicons-elementor"></div>
-					<h2><?php esc_html_e( '2. עריכת תוכן העדכון עם אלמנטור (אופציונלי)', 'hadashot-mercaz' ); ?></h2>
-					<p><?php esc_html_e( 'אפשר גם לבנות את תוכן העדכון עצמו עם אלמנטור: פתחו עדכון וללחצו על "ערוך עם Elementor". הפופ-אפ יציג את התוכן בדיוק כפי שנבנה, ומסונכרן אוטומטית עם ממשק הניהול הרגיל.', 'hadashot-mercaz' ); ?></p>
+					<p><?php esc_html_e( 'עברו ל"כל העדכונים" ולחצו על "הוספת עדכון". מסך קליל ומהיר: כותרת, טקסט, תמונה ראשית, קטגוריה, ואם רוצים – אודיו ו/או וידאו בתיבת המדיה. בלי בונה עמודים ובלי בלוקים.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-category"></div>
-					<h2><?php esc_html_e( '3. קטגוריות', 'hadashot-mercaz' ); ?></h2>
+					<h2><?php esc_html_e( '2. קטגוריות', 'hadashot-mercaz' ); ?></h2>
 					<p><?php esc_html_e( 'ניתן לסווג עדכונים לקטגוריות (בדומה לקטגוריות פוסטים), וכך לבחור בעורך אלמנטור אילו קטגוריות להציג בכל ווידג׳ט.', 'hadashot-mercaz' ); ?></p>
+				</div>
+				<div class="hm-guide-card">
+					<div class="hm-guide-icon dashicons dashicons-images-alt2"></div>
+					<h2><?php esc_html_e( '3. ערכות פריסה (למשבצות פריסת הפיצול)', 'hadashot-mercaz' ); ?></h2>
+					<p><?php esc_html_e( 'תחת "ערכות פריסה" תראו תצוגה מקדימה אמיתית של הפריסה: עמודת מדיה ימין, רשימת העדכונים באמצע, עמודת מדיה שמאל. בכל עמודה בוחרים תמונה או וידאו, ולווידאו קובעים הפעלה אוטומטית או בלחיצה בלבד. אותה ערכה נבחרת מתוך הווידג׳ט באלמנטור, כך שאין כפילות – עדכון כאן משתקף שם מיד.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-admin-links"></div>
@@ -154,7 +197,7 @@ class HM_Admin {
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-layout"></div>
 					<h2><?php esc_html_e( '5. בחירת פריסה', 'hadashot-mercaz' ); ?></h2>
-					<p><?php esc_html_e( 'בלשונית "תוכן" בוחרים פריסה: פיצול עם 2 תמונות ורשימה נעה, טיקר/רשימה, גריד כרטיסיות או קרוסלה. לכל פריסה יש הגדרות ייעודיות.', 'hadashot-mercaz' ); ?></p>
+					<p><?php esc_html_e( 'בלשונית "תוכן" בוחרים פריסה: פיצול עם ערכת פריסה ורשימה נעה, טיקר/רשימה, גריד כרטיסיות או קרוסלה. לכל פריסה יש הגדרות ייעודיות, ובכל כרטיס בפאנל כתוב בדיוק מה עורכים.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-controls-play"></div>

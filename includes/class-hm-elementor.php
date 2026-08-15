@@ -23,6 +23,11 @@ class HM_Elementor {
 		add_action( 'admin_notices', array( $this, 'maybe_show_missing_elementor_notice' ) );
 		add_action( 'elementor/elements/categories_registered', array( $this, 'register_category' ) );
 		add_action( 'elementor/widgets/register', array( $this, 'register_widgets' ) );
+		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'enqueue_editor_styles' ) );
+	}
+
+	public function enqueue_editor_styles() {
+		wp_enqueue_style( 'hm-updates-editor', HM_UPDATES_URL . 'assets/css/editor.css', array(), HM_UPDATES_VERSION );
 	}
 
 	public function is_elementor_active() {

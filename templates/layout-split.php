@@ -15,21 +15,13 @@ $enable_popup     = ! empty( $settings['enable_popup'] ) && 'yes' === $settings[
 $post_ids         = array();
 $total_duration   = $item_duration * max( 1, $query->post_count );
 
-$image_1      = ! empty( $settings['image_1']['url'] ) ? $settings['image_1']['url'] : '';
-$image_2      = ! empty( $settings['image_2']['url'] ) ? $settings['image_2']['url'] : '';
-$image_1_link = ! empty( $settings['image_1_link']['url'] ) ? $settings['image_1_link']['url'] : '';
-$image_2_link = ! empty( $settings['image_2_link']['url'] ) ? $settings['image_2_link']['url'] : '';
+$slot_right = class_exists( 'HM_Layout_Set' ) ? HM_Layout_Set::get_slot( $settings['layout_set_id'] ?? '', 'right' ) : null;
+$slot_left  = class_exists( 'HM_Layout_Set' ) ? HM_Layout_Set::get_slot( $settings['layout_set_id'] ?? '', 'left' ) : null;
 ?>
 <div class="hm-widget-root" data-hm-uid="<?php echo esc_attr( $widget_uid ); ?>">
 	<div class="hm-updates-widget hm-layout-split">
 
-		<?php if ( $image_1 ) : ?>
-			<div class="hm-split-image hm-split-image-1">
-				<?php if ( $image_1_link ) : ?><a href="<?php echo esc_url( $image_1_link ); ?>"><?php endif; ?>
-				<img src="<?php echo esc_url( $image_1 ); ?>" alt="">
-				<?php if ( $image_1_link ) : ?></a><?php endif; ?>
-			</div>
-		<?php endif; ?>
+		<?php $widget->render_media_slot( $slot_right, 'right' ); ?>
 
 		<div class="hm-split-list">
 			<?php if ( $query->have_posts() ) : ?>
@@ -66,13 +58,7 @@ $image_2_link = ! empty( $settings['image_2_link']['url'] ) ? $settings['image_2
 			<?php endif; ?>
 		</div>
 
-		<?php if ( $image_2 ) : ?>
-			<div class="hm-split-image hm-split-image-2">
-				<?php if ( $image_2_link ) : ?><a href="<?php echo esc_url( $image_2_link ); ?>"><?php endif; ?>
-				<img src="<?php echo esc_url( $image_2 ); ?>" alt="">
-				<?php if ( $image_2_link ) : ?></a><?php endif; ?>
-			</div>
-		<?php endif; ?>
+		<?php $widget->render_media_slot( $slot_left, 'left' ); ?>
 
 	</div>
 

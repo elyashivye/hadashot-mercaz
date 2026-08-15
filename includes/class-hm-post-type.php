@@ -61,17 +61,10 @@ class HM_Post_Type {
 			'has_archive'        => true,
 			'rewrite'            => array( 'slug' => 'updates' ),
 			'query_var'          => true,
-			'supports'           => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
+			'supports'           => array( 'title', 'editor', 'thumbnail' ),
 		);
 
 		register_post_type( HM_UPDATES_POST_TYPE, $args );
-
-		// Let site editors optionally author an update's full content with
-		// Elementor itself, not just the plain editor. When enabled per-post
-		// (the "Edit with Elementor" button), the popup still renders it
-		// correctly because HM_Frontend::get_rendered_content() runs content
-		// through the standard `the_content` filter that Elementor hooks into.
-		add_post_type_support( HM_UPDATES_POST_TYPE, 'elementor' );
 	}
 
 	public function register_taxonomy() {

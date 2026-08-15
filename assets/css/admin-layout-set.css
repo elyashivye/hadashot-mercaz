@@ -1,0 +1,133 @@
+/* Hadashot Mercaz – visual slot editor for "ערכת פריסה" */
+
+.hm-set-editor {
+	display: flex;
+	align-items: stretch;
+	gap: 16px;
+	margin-top: 6px;
+}
+
+.hm-set-slot {
+	flex: 0 0 27%;
+	max-width: 27%;
+	background: #f8f9fb;
+	border: 1px solid #e2e4e7;
+	border-radius: 12px;
+	padding: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.hm-set-slot-center {
+	flex: 1 1 auto;
+	max-width: none;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	background: repeating-linear-gradient(135deg, #f8f9fb, #f8f9fb 10px, #f1f2f5 10px, #f1f2f5 20px);
+}
+
+.hm-set-slot-label {
+	font-weight: 600;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.hm-set-center-visual {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+	padding: 0 10px;
+}
+
+.hm-set-center-visual span {
+	display: block;
+	height: 8px;
+	border-radius: 4px;
+	background: #d6d9de;
+}
+
+.hm-set-center-visual span:nth-child(2) {
+	width: 80%;
+	margin-inline: auto;
+}
+
+.hm-set-center-visual span:nth-child(4) {
+	width: 60%;
+	margin-inline: auto;
+}
+
+.hm-set-center-note {
+	font-size: 11px;
+	color: #757b83;
+	margin: 4px 0 0;
+}
+
+.hm-set-slot-preview {
+	background: #fff;
+	border: 1px dashed #c3c4c7;
+	border-radius: 8px;
+	min-height: 130px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.hm-set-slot-preview img,
+.hm-set-slot-preview video {
+	width: 100%;
+	max-height: 160px;
+	object-fit: cover;
+	display: block;
+}
+
+.hm-set-slot-empty {
+	color: #8c8f94;
+	font-size: 13px;
+	text-align: center;
+	padding: 10px;
+}
+
+.hm-set-slot-embed-note {
+	font-size: 12px;
+	color: #2271b1;
+	padding: 10px;
+	word-break: break-all;
+	text-align: center;
+}
+
+.hm-set-type-toggle {
+	gap: 14px;
+	margin: 0;
+}
+
+.hm-set-video-type-toggle {
+	gap: 14px;
+	margin-bottom: 8px;
+}
+
+.hm-set-video-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.hm-set-autoplay {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: #1d2327;
+}
+
+.hm-set-autoplay-note {
+	margin: 0;
+	font-size: 11px;
+}
+
+.hm-set-link-field {
+	margin-top: 4px;
+}
