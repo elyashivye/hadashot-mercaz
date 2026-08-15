@@ -137,28 +137,33 @@ class HM_Admin {
 					<p><?php esc_html_e( 'עברו ל"כל העדכונים" ולחצו על "הוספת עדכון". הזינו כותרת ותוכן מלא, בחרו תמונה ראשית, ואם רוצים – הוסיפו קטגוריה, אודיו ו/או וידאו בתיבת המדיה שבתחתית העמוד.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
+					<div class="hm-guide-icon dashicons dashicons-elementor"></div>
+					<h2><?php esc_html_e( '2. עריכת תוכן העדכון עם אלמנטור (אופציונלי)', 'hadashot-mercaz' ); ?></h2>
+					<p><?php esc_html_e( 'אפשר גם לבנות את תוכן העדכון עצמו עם אלמנטור: פתחו עדכון וללחצו על "ערוך עם Elementor". הפופ-אפ יציג את התוכן בדיוק כפי שנבנה, ומסונכרן אוטומטית עם ממשק הניהול הרגיל.', 'hadashot-mercaz' ); ?></p>
+				</div>
+				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-category"></div>
-					<h2><?php esc_html_e( '2. קטגוריות', 'hadashot-mercaz' ); ?></h2>
+					<h2><?php esc_html_e( '3. קטגוריות', 'hadashot-mercaz' ); ?></h2>
 					<p><?php esc_html_e( 'ניתן לסווג עדכונים לקטגוריות (בדומה לקטגוריות פוסטים), וכך לבחור בעורך אלמנטור אילו קטגוריות להציג בכל ווידג׳ט.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
-					<div class="hm-guide-icon dashicons dashicons-elementor"></div>
-					<h2><?php esc_html_e( '3. הטמעה עם אלמנטור', 'hadashot-mercaz' ); ?></h2>
+					<div class="hm-guide-icon dashicons dashicons-admin-links"></div>
+					<h2><?php esc_html_e( '4. הטמעת ווידג\'ט התצוגה', 'hadashot-mercaz' ); ?></h2>
 					<p><?php esc_html_e( 'פתחו עמוד לעריכה באלמנטור, חפשו את הווידג׳ט "עדכוני חדשות מקצועיים" בקטגוריית "חדשות מרכז", וגררו אותו לעמוד.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-layout"></div>
-					<h2><?php esc_html_e( '4. בחירת פריסה', 'hadashot-mercaz' ); ?></h2>
+					<h2><?php esc_html_e( '5. בחירת פריסה', 'hadashot-mercaz' ); ?></h2>
 					<p><?php esc_html_e( 'בלשונית "תוכן" בוחרים פריסה: פיצול עם 2 תמונות ורשימה נעה, טיקר/רשימה, גריד כרטיסיות או קרוסלה. לכל פריסה יש הגדרות ייעודיות.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-controls-play"></div>
-					<h2><?php esc_html_e( '5. קצב הגלילה', 'hadashot-mercaz' ); ?></h2>
+					<h2><?php esc_html_e( '6. קצב הגלילה', 'hadashot-mercaz' ); ?></h2>
 					<p><?php esc_html_e( 'תחת "הגדרות תזוזה" קובעים כמה שניות כל עדכון מוצג, כיוון התנועה, והאם לעצור בעת מעבר עכבר.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-admin-appearance"></div>
-					<h2><?php esc_html_e( '6. עיצוב מלא', 'hadashot-mercaz' ); ?></h2>
+					<h2><?php esc_html_e( '7. עיצוב מלא', 'hadashot-mercaz' ); ?></h2>
 					<p><?php esc_html_e( 'כל הצבעים, הפונטים, המרווחים והעיצוב של הפופ-אפ נשלטים מלשונית "עיצוב" בווידג׳ט עצמו – ללא צורך בקוד.', 'hadashot-mercaz' ); ?></p>
 				</div>
 			</div>

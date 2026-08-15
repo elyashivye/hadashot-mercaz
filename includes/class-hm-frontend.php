@@ -132,4 +132,33 @@ class HM_Frontend {
 		$text = wp_strip_all_tags( strip_shortcodes( $text ) );
 		return wp_trim_words( $text, $length, '…' );
 	}
+
+	/**
+	 * Full rendered content for the popup, run through the standard
+	 * `the_content` pipeline so Gutenberg blocks, shortcodes, and (when
+	 * enabled for this post type) Elementor-built content all render
+	 * exactly as they would on a normal singular view.
+	 */
+	public static function get_rendered_content( $post_id ) {
+		$post_obj = get_post( $post_id );
+		if ( ! $post_obj ) {
+			return '';
+		}
+
+		global $post;
+		$original_post = $post;
+
+		$post = $post_obj;
+		setup_postdata( $post );
+		$content = apply_filters( 'the_content', $post_obj->post_content );
+
+		if ( $original_post ) {
+			$post = $original_post;
+			setup_postdata( $post );
+		} else {
+			wp_reset_postdata();
+		}
+
+		return $content;
+	}
 }

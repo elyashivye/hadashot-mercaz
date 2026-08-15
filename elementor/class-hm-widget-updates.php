@@ -991,7 +991,7 @@ class HM_Widget_Updates extends Widget_Base {
 				<?php if ( $audio ) : ?>
 					<div class="hm-popup-media hm-popup-audio"><?php echo $audio; ?></div>
 				<?php endif; ?>
-				<div class="hm-popup-content"><?php echo wpautop( wp_kses_post( get_post_field( 'post_content', $post_id ) ) ); ?></div>
+				<div class="hm-popup-content"><?php echo HM_Frontend::get_rendered_content( $post_id ); ?></div>
 			</div>
 		</script>
 		<?php
