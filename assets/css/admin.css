@@ -1,0 +1,167 @@
+/* Hadashot Mercaz – Professional Updates: admin styles */
+
+/* Metabox */
+.hm-metabox {
+	padding: 4px 2px;
+}
+
+.hm-media-block h3 {
+	margin: 0 0 10px;
+	font-size: 14px;
+}
+
+.hm-radio-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 18px;
+	margin-bottom: 14px;
+}
+
+.hm-radio-group label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+}
+
+.hm-media-field {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin-bottom: 6px;
+}
+
+.hm-media-field input[type="url"] {
+	max-width: 480px;
+}
+
+.hm-filename {
+	font-style: italic;
+	color: #646970;
+}
+
+.hm-metabox hr {
+	margin: 20px 0;
+	border: 0;
+	border-top: 1px solid #e2e4e7;
+}
+
+/* List table */
+.column-hm_thumb {
+	width: 60px;
+}
+
+.column-hm_media {
+	width: 90px;
+}
+
+.hm-no-thumb {
+	color: #c3c4c7;
+	font-size: 30px;
+	width: 40px;
+	height: 40px;
+}
+
+.hm-media-badges {
+	display: flex;
+	gap: 6px;
+}
+
+.hm-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	font-size: 15px;
+}
+
+.hm-badge-audio {
+	background: #eaf3ff;
+	color: #2271b1;
+}
+
+.hm-badge-video {
+	background: #fdeaea;
+	color: #d63638;
+}
+
+.hm-badge-empty {
+	color: #c3c4c7;
+}
+
+/* Dashboard widget */
+.hm-dashboard-widget .hm-dashboard-list {
+	margin: 0;
+}
+
+.hm-dashboard-list li {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.hm-dashboard-list li:last-child {
+	border-bottom: 0;
+}
+
+.hm-dash-date {
+	color: #646970;
+	font-size: 12px;
+}
+
+.hm-dashboard-actions {
+	margin-top: 14px;
+	display: flex;
+	gap: 8px;
+}
+
+/* Help / guide page */
+.hm-guide-wrap h1 {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.hm-guide-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 18px;
+	margin-top: 24px;
+}
+
+.hm-guide-card {
+	background: #fff;
+	border: 1px solid #e2e4e7;
+	border-radius: 12px;
+	padding: 22px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+}
+
+.hm-guide-icon {
+	width: 44px;
+	height: 44px;
+	border-radius: 10px;
+	background: #f0f6fc;
+	color: #2271b1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 22px;
+	margin-bottom: 14px;
+}
+
+.hm-guide-card h2 {
+	margin: 0 0 8px;
+	font-size: 16px;
+}
+
+.hm-guide-card p {
+	margin: 0;
+	color: #50575e;
+	line-height: 1.6;
+}

@@ -1,0 +1,503 @@
+/* Hadashot Mercaz – Professional Updates: frontend styles */
+
+.hm-widget-root,
+.hm-widget-root *,
+.hm-widget-root *::before,
+.hm-widget-root *::after {
+	box-sizing: border-box;
+}
+
+.hm-updates-widget {
+	direction: inherit;
+	position: relative;
+	width: 100%;
+}
+
+.hm-empty {
+	opacity: .6;
+	padding: 20px;
+	text-align: center;
+	margin: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout: split (2 images + moving headline list)                    */
+/* ------------------------------------------------------------------ */
+
+.hm-layout-split {
+	display: flex;
+	align-items: stretch;
+	gap: 16px;
+}
+
+.hm-split-image {
+	flex: 0 0 25%;
+	max-width: 25%;
+	overflow: hidden;
+	border-radius: inherit;
+}
+
+.hm-split-image img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.hm-split-image a {
+	display: block;
+	height: 100%;
+}
+
+.hm-split-list {
+	flex: 1 1 50%;
+	min-width: 0;
+	overflow: hidden;
+	position: relative;
+	min-height: 280px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Ticker marquee mechanics (shared by split + ticker layouts)        */
+/* ------------------------------------------------------------------ */
+
+.hm-ticker-track {
+	display: flex;
+	flex-direction: column;
+	animation-duration: var(--hm-duration, 20s);
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	will-change: transform;
+}
+
+.hm-ticker-track.hm-dir-up {
+	animation-name: hm-marquee-up;
+}
+
+.hm-ticker-track.hm-dir-down {
+	animation-name: hm-marquee-down;
+	transform: translateY(-50%);
+}
+
+.hm-ticker-track.hm-pause-hover:hover {
+	animation-play-state: paused;
+}
+
+@keyframes hm-marquee-up {
+	from { transform: translateY(0); }
+	to { transform: translateY(-50%); }
+}
+
+@keyframes hm-marquee-down {
+	from { transform: translateY(-50%); }
+	to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hm-ticker-track {
+		animation: none !important;
+	}
+}
+
+.hm-ticker-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.hm-ticker-list li {
+	border-bottom: 1px solid rgba(0, 0, 0, .08);
+	padding-block: 14px;
+}
+
+.hm-ticker-list li:first-child {
+	padding-block-start: 0;
+}
+
+.hm-update-title {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	background: none;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	color: inherit;
+	text-align: start;
+	cursor: pointer;
+	line-height: 1.4;
+}
+
+.hm-update-title > span:first-of-type,
+.hm-update-title-with-thumb > span:not(.hm-ticker-thumb) {
+	flex: 1;
+}
+
+button.hm-update-title:hover {
+	opacity: .85;
+}
+
+.hm-update-title-with-thumb {
+	align-items: center;
+}
+
+.hm-ticker-thumb {
+	flex: 0 0 auto;
+	display: block;
+}
+
+.hm-ticker-thumb img {
+	width: 44px;
+	height: 44px;
+	border-radius: 8px;
+	object-fit: cover;
+	display: block;
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout: ticker (full width list)                                   */
+/* ------------------------------------------------------------------ */
+
+.hm-layout-ticker .hm-split-list,
+.hm-layout-ticker .hm-ticker-track-wrap {
+	min-height: 220px;
+}
+
+.hm-layout-ticker {
+	overflow: hidden;
+	min-height: 220px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout: grid                                                       */
+/* ------------------------------------------------------------------ */
+
+.hm-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+}
+
+@media (max-width: 1024px) {
+	.hm-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 600px) {
+	.hm-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.hm-card {
+	background: #fff;
+	border: 0;
+	display: flex;
+	flex-direction: column;
+	text-align: start;
+	cursor: pointer;
+	padding: 0;
+	overflow: hidden;
+	border-radius: 12px;
+	transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.hm-card:hover {
+	transform: translateY(-3px);
+}
+
+.hm-card-image {
+	overflow: hidden;
+}
+
+.hm-card-image img {
+	display: block;
+	width: 100%;
+	object-fit: cover;
+}
+
+.hm-card-body {
+	padding: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	flex: 1;
+}
+
+.hm-card-category {
+	display: inline-block;
+	align-self: flex-start;
+	font-size: 12px;
+	line-height: 1;
+	padding: 5px 12px;
+	border-radius: 999px;
+	background: #eef1fb;
+	color: #3a4a9c;
+}
+
+.hm-card-title {
+	margin: 0;
+	font-size: 18px;
+	line-height: 1.4;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.hm-card-excerpt {
+	margin: 0;
+	opacity: .75;
+	line-height: 1.6;
+}
+
+.hm-card-date {
+	font-size: 12px;
+	opacity: .55;
+	margin-top: auto;
+	padding-top: 6px;
+}
+
+.hm-card-badges {
+	display: inline-flex;
+	gap: 6px;
+}
+
+.hm-media-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, .06);
+	font-size: 11px;
+	flex: 0 0 auto;
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout: carousel                                                   */
+/* ------------------------------------------------------------------ */
+
+.hm-carousel-wrap {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.hm-carousel {
+	--hm-slides: 3;
+	--hm-gap: 20px;
+	display: flex;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	gap: var(--hm-gap);
+	flex: 1;
+	min-width: 0;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.hm-carousel::-webkit-scrollbar {
+	display: none;
+}
+
+.hm-carousel-slide {
+	flex: 0 0 calc((100% - var(--hm-gap) * (var(--hm-slides) - 1)) / var(--hm-slides));
+	scroll-snap-align: start;
+	min-width: 0;
+}
+
+.hm-carousel-arrow {
+	flex: 0 0 auto;
+	width: 42px;
+	height: 42px;
+	border-radius: 50%;
+	border: 0;
+	background: rgba(0, 0, 0, .06);
+	cursor: pointer;
+	font-size: 22px;
+	line-height: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.hm-carousel-arrow:hover {
+	background: rgba(0, 0, 0, .12);
+}
+
+.hm-carousel-dots {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.hm-carousel-dot {
+	width: 8px;
+	height: 8px;
+	padding: 0;
+	border: 0;
+	border-radius: 999px;
+	background: rgba(0, 0, 0, .2);
+	cursor: pointer;
+	transition: width .2s ease, background-color .2s ease;
+}
+
+.hm-carousel-dot.is-active {
+	width: 24px;
+	background: rgba(0, 0, 0, .6);
+}
+
+/* ------------------------------------------------------------------ */
+/* Popup                                                               */
+/* ------------------------------------------------------------------ */
+
+.hm-popup-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(15, 18, 25, .75);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	z-index: 100000;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .25s ease, visibility .25s ease;
+}
+
+.hm-popup-overlay.is-open {
+	opacity: 1;
+	visibility: visible;
+}
+
+.hm-popup-box {
+	position: relative;
+	background: #fff;
+	width: 100%;
+	max-width: 640px;
+	max-height: 88vh;
+	overflow-y: auto;
+	border-radius: 16px;
+	padding: 36px;
+	transform: translateY(24px);
+	transition: transform .25s ease;
+}
+
+.hm-popup-overlay.is-open .hm-popup-box {
+	transform: translateY(0);
+}
+
+.hm-popup-close {
+	position: absolute;
+	inset-inline-end: 16px;
+	top: 16px;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	border: 0;
+	background: rgba(0, 0, 0, .06);
+	font-size: 20px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.hm-popup-category {
+	display: inline-block;
+	font-size: 12px;
+	padding: 4px 12px;
+	border-radius: 999px;
+	background: #eef1fb;
+	color: #3a4a9c;
+	margin-bottom: 12px;
+}
+
+.hm-popup-title {
+	margin: 0 0 8px;
+	font-size: 26px;
+	line-height: 1.35;
+}
+
+.hm-popup-date {
+	opacity: .55;
+	font-size: 13px;
+	margin-bottom: 18px;
+}
+
+.hm-popup-image img {
+	display: block;
+	width: 100%;
+	border-radius: 12px;
+	margin-bottom: 18px;
+}
+
+.hm-popup-media {
+	margin-bottom: 18px;
+}
+
+.hm-popup-media audio,
+.hm-popup-media video {
+	width: 100%;
+	display: block;
+	border-radius: 10px;
+}
+
+.hm-popup-media iframe {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	height: auto;
+	border: 0;
+	border-radius: 10px;
+	display: block;
+}
+
+.hm-popup-content {
+	line-height: 1.75;
+}
+
+.hm-popup-content p:first-child {
+	margin-top: 0;
+}
+
+body.hm-popup-locked {
+	overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 767px) {
+	.hm-layout-split {
+		flex-direction: column;
+	}
+
+	.hm-split-image,
+	.hm-split-list {
+		flex-basis: auto;
+		max-width: 100%;
+		width: 100%;
+	}
+
+	.hm-split-image img {
+		height: 160px;
+	}
+
+	.hm-split-list {
+		min-height: 220px;
+	}
+
+	.hm-popup-box {
+		padding: 24px;
+	}
+}
