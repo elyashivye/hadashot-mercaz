@@ -1037,8 +1037,8 @@ class HM_Widget_Updates extends Widget_Base {
 
 	public function render_popup_item( $post_id, $settings ) {
 		$title = get_the_title( $post_id );
-		$video = HM_Frontend::get_video_html( $post_id );
-		$audio = HM_Frontend::get_audio_html( $post_id );
+		$type  = HM_Frontend::get_update_type( $post_id );
+		$media = HM_Frontend::get_media_html( $post_id );
 		$terms = get_the_terms( $post_id, HM_UPDATES_TAXONOMY );
 		?>
 		<script type="text/template" class="hm-popup-item" data-hm-update-id="<?php echo esc_attr( $post_id ); ?>">
@@ -1053,32 +1053,26 @@ class HM_Widget_Updates extends Widget_Base {
 				<?php if ( has_post_thumbnail( $post_id ) ) : ?>
 					<div class="hm-popup-image"><?php echo get_the_post_thumbnail( $post_id, 'large' ); ?></div>
 				<?php endif; ?>
-				<?php if ( $video ) : ?>
-					<div class="hm-popup-media hm-popup-video"><?php echo $video; ?></div>
+				<?php if ( $media ) : ?>
+					<div class="hm-popup-media hm-popup-<?php echo esc_attr( $type ); ?>"><?php echo $media; ?></div>
 				<?php endif; ?>
-				<?php if ( $audio ) : ?>
-					<div class="hm-popup-media hm-popup-audio"><?php echo $audio; ?></div>
+				<?php if ( 'text' === $type ) : ?>
+					<div class="hm-popup-content"><?php echo HM_Frontend::get_rendered_content( $post_id ); ?></div>
+				<?php elseif ( get_post_field( 'post_excerpt', $post_id ) ) : ?>
+					<div class="hm-popup-content"><?php echo wpautop( esc_html( get_post_field( 'post_excerpt', $post_id ) ) ); ?></div>
 				<?php endif; ?>
-				<div class="hm-popup-content"><?php echo HM_Frontend::get_rendered_content( $post_id ); ?></div>
 			</div>
 		</script>
 		<?php
 	}
 
 	public function render_media_badges( $post_id ) {
-		$has_audio = HM_Frontend::has_audio( $post_id );
-		$has_video = HM_Frontend::has_video( $post_id );
-		if ( ! $has_audio && ! $has_video ) {
-			return;
+		$type = HM_Frontend::get_update_type( $post_id );
+		if ( 'video' === $type ) {
+			echo '<span class="hm-card-badges"><span class="hm-media-icon hm-media-icon-video" title="' . esc_attr__( 'עדכון וידאו', 'hadashot-mercaz' ) . '">▶</span></span>';
+		} elseif ( 'audio' === $type ) {
+			echo '<span class="hm-card-badges"><span class="hm-media-icon hm-media-icon-audio" title="' . esc_attr__( 'עדכון אודיו', 'hadashot-mercaz' ) . '">♪</span></span>';
 		}
-		echo '<span class="hm-card-badges">';
-		if ( $has_video ) {
-			echo '<span class="hm-media-icon hm-media-icon-video" title="' . esc_attr__( 'כולל וידאו', 'hadashot-mercaz' ) . '">▶</span>';
-		}
-		if ( $has_audio ) {
-			echo '<span class="hm-media-icon hm-media-icon-audio" title="' . esc_attr__( 'כולל אודיו', 'hadashot-mercaz' ) . '">♪</span>';
-		}
-		echo '</span>';
 	}
 
 	public function render_category_badge( $post_id ) {

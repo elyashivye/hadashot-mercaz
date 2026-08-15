@@ -2,7 +2,7 @@
 /**
  * Plugin Name: חדשות מרכז – עדכוני חדשות מקצועיים
  * Description: ניהול עדכוני חדשות מקצועיים (טקסט, תמונה, אודיו ווידאו) עם ווידג'ט אלמנטור מלא עיצוב לתצוגה במגוון פריסות.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Hadashot Mercaz
  * Text Domain: hadashot-mercaz
  * Domain Path: /languages
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'HM_UPDATES_VERSION', '1.1.0' );
+define( 'HM_UPDATES_VERSION', '1.2.0' );
 define( 'HM_UPDATES_FILE', __FILE__ );
 define( 'HM_UPDATES_DIR', plugin_dir_path( __FILE__ ) );
 define( 'HM_UPDATES_URL', plugin_dir_url( __FILE__ ) );
@@ -24,7 +24,7 @@ define( 'HM_LAYOUT_SET_POST_TYPE', 'hm_layout_set' );
 
 require_once HM_UPDATES_DIR . 'includes/class-hm-post-type.php';
 require_once HM_UPDATES_DIR . 'includes/class-hm-layout-set.php';
-require_once HM_UPDATES_DIR . 'includes/class-hm-metaboxes.php';
+require_once HM_UPDATES_DIR . 'includes/class-hm-update-editor.php';
 require_once HM_UPDATES_DIR . 'includes/class-hm-admin.php';
 require_once HM_UPDATES_DIR . 'includes/class-hm-frontend.php';
 require_once HM_UPDATES_DIR . 'includes/class-hm-elementor.php';
@@ -48,7 +48,7 @@ final class Hadashot_Mercaz_Updates {
 
 		HM_Post_Type::instance();
 		HM_Layout_Set::instance();
-		HM_Metaboxes::instance();
+		HM_Update_Editor::instance();
 		HM_Admin::instance();
 		HM_Frontend::instance();
 		HM_Elementor::instance();

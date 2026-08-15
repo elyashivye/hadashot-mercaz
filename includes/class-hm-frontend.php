@@ -69,55 +69,57 @@ class HM_Frontend {
 		return $options;
 	}
 
+	/**
+	 * An update is exclusively text, audio, or video — never a combination.
+	 */
+	public static function get_update_type( $post_id ) {
+		$type = get_post_meta( $post_id, '_hm_update_type', true );
+		return in_array( $type, array( 'text', 'audio', 'video' ), true ) ? $type : 'text';
+	}
+
 	public static function has_audio( $post_id ) {
-		$type = get_post_meta( $post_id, '_hm_audio_type', true );
-		return $type && 'none' !== $type;
+		return 'audio' === self::get_update_type( $post_id );
 	}
 
 	public static function has_video( $post_id ) {
-		$type = get_post_meta( $post_id, '_hm_video_type', true );
-		return $type && 'none' !== $type;
+		return 'video' === self::get_update_type( $post_id );
 	}
 
-	public static function get_audio_html( $post_id ) {
-		$type = get_post_meta( $post_id, '_hm_audio_type', true );
-
-		if ( 'upload' === $type ) {
-			$attachment_id = absint( get_post_meta( $post_id, '_hm_audio_attachment_id', true ) );
-			if ( $attachment_id ) {
-				return wp_audio_shortcode( array( 'src' => wp_get_attachment_url( $attachment_id ) ) );
-			}
-		} elseif ( 'embed' === $type ) {
-			$url = get_post_meta( $post_id, '_hm_audio_embed_url', true );
-			if ( $url ) {
-				$embed = wp_oembed_get( $url );
-				if ( $embed ) {
-					return '<div class="hm-embed hm-embed-audio">' . $embed . '</div>';
-				}
-				return wp_audio_shortcode( array( 'src' => $url ) );
-			}
+	/**
+	 * Renders the update's audio or video player, whichever its exclusive
+	 * type is. Returns an empty string for text updates or empty media.
+	 */
+	public static function get_media_html( $post_id ) {
+		$type = self::get_update_type( $post_id );
+		if ( 'audio' !== $type && 'video' !== $type ) {
+			return '';
 		}
 
-		return '';
-	}
+		$source = get_post_meta( $post_id, '_hm_media_source', true );
 
-	public static function get_video_html( $post_id ) {
-		$type = get_post_meta( $post_id, '_hm_video_type', true );
+		if ( 'upload' === $source ) {
+			$attachment_id = absint( get_post_meta( $post_id, '_hm_media_attachment_id', true ) );
+			if ( ! $attachment_id ) {
+				return '';
+			}
+			$url = wp_get_attachment_url( $attachment_id );
+			return 'audio' === $type
+				? wp_audio_shortcode( array( 'src' => $url ) )
+				: wp_video_shortcode( array( 'src' => $url ) );
+		}
 
-		if ( 'upload' === $type ) {
-			$attachment_id = absint( get_post_meta( $post_id, '_hm_video_attachment_id', true ) );
-			if ( $attachment_id ) {
-				return wp_video_shortcode( array( 'src' => wp_get_attachment_url( $attachment_id ) ) );
+		if ( 'embed' === $source ) {
+			$url = get_post_meta( $post_id, '_hm_media_embed_url', true );
+			if ( ! $url ) {
+				return '';
 			}
-		} elseif ( 'embed' === $type ) {
-			$url = get_post_meta( $post_id, '_hm_video_embed_url', true );
-			if ( $url ) {
-				$embed = wp_oembed_get( $url, array( 'width' => 640 ) );
-				if ( $embed ) {
-					return '<div class="hm-embed hm-embed-video">' . $embed . '</div>';
-				}
-				return wp_video_shortcode( array( 'src' => $url ) );
+			$embed = wp_oembed_get( $url, array( 'width' => 640 ) );
+			if ( $embed ) {
+				return '<div class="hm-embed hm-embed-' . esc_attr( $type ) . '">' . $embed . '</div>';
 			}
+			return 'audio' === $type
+				? wp_audio_shortcode( array( 'src' => $url ) )
+				: wp_video_shortcode( array( 'src' => $url ) );
 		}
 
 		return '';

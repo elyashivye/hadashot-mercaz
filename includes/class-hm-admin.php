@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Admin UI: list table columns, dashboard widget, help screen, styling.
+ * Creating/editing an update itself happens on HM_Update_Editor's custom
+ * screen, not on the default post.php.
  */
 class HM_Admin {
 
@@ -23,50 +25,6 @@ class HM_Admin {
 		add_action( 'manage_' . HM_UPDATES_POST_TYPE . '_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
 		add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget' ) );
 		add_action( 'admin_menu', array( $this, 'add_help_page' ) );
-		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
-		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
-		add_filter( 'wp_editor_settings', array( $this, 'simplify_editor' ), 10, 2 );
-		add_action( 'add_meta_boxes', array( $this, 'reorder_meta_boxes' ), 999 );
-	}
-
-	/**
-	 * Keep updates on the classic editor: a quick text + media form, not a
-	 * block-based page builder.
-	 */
-	public function disable_block_editor( $use_block_editor, $post_type ) {
-		if ( HM_UPDATES_POST_TYPE === $post_type ) {
-			return false;
-		}
-		return $use_block_editor;
-	}
-
-	public function simplify_editor( $settings, $editor_id ) {
-		if ( 'content' !== $editor_id ) {
-			return $settings;
-		}
-		$screen = get_current_screen();
-		if ( ! $screen || HM_UPDATES_POST_TYPE !== $screen->post_type ) {
-			return $settings;
-		}
-		$settings['teeny']         = true;
-		$settings['media_buttons'] = false;
-		$settings['quicktags']     = true;
-		$settings['textarea_rows'] = 12;
-		return $settings;
-	}
-
-	/**
-	 * Move the media meta box directly under the content editor so the whole
-	 * "text + media" form reads top-to-bottom instead of being scattered.
-	 */
-	public function reorder_meta_boxes() {
-		global $wp_meta_boxes;
-		if ( empty( $wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high']['hm_media_meta'] ) ) {
-			return;
-		}
-		$box = $wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high']['hm_media_meta'];
-		unset( $wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high']['hm_media_meta'] );
-		$wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high'] = array( 'hm_media_meta' => $box ) + $wp_meta_boxes[ HM_UPDATES_POST_TYPE ]['normal']['high'];
 	}
 
 	public function enqueue( $hook ) {
@@ -84,7 +42,7 @@ class HM_Admin {
 				$new_columns['hm_thumb']  = __( 'תמונה', 'hadashot-mercaz' );
 			}
 		}
-		$new_columns['hm_media'] = __( 'מדיה', 'hadashot-mercaz' );
+		$new_columns['hm_type'] = __( 'סוג', 'hadashot-mercaz' );
 		unset( $new_columns['date'] );
 		$new_columns['date'] = __( 'תאריך', 'hadashot-mercaz' );
 		return $new_columns;
@@ -100,20 +58,21 @@ class HM_Admin {
 				}
 				break;
 
-			case 'hm_media':
-				$audio_type = get_post_meta( $post_id, '_hm_audio_type', true );
-				$video_type = get_post_meta( $post_id, '_hm_video_type', true );
-				echo '<div class="hm-media-badges">';
-				if ( $audio_type && 'none' !== $audio_type ) {
-					echo '<span class="hm-badge hm-badge-audio dashicons dashicons-format-audio" title="' . esc_attr__( 'כולל אודיו', 'hadashot-mercaz' ) . '"></span>';
-				}
-				if ( $video_type && 'none' !== $video_type ) {
-					echo '<span class="hm-badge hm-badge-video dashicons dashicons-format-video" title="' . esc_attr__( 'כולל וידאו', 'hadashot-mercaz' ) . '"></span>';
-				}
-				if ( ( ! $audio_type || 'none' === $audio_type ) && ( ! $video_type || 'none' === $video_type ) ) {
-					echo '<span class="hm-badge-empty">—</span>';
-				}
-				echo '</div>';
+			case 'hm_type':
+				$type = HM_Frontend::get_update_type( $post_id );
+				$map  = array(
+					'text'  => array( 'dashicons-text-page', __( 'טקסט', 'hadashot-mercaz' ), 'hm-badge-text' ),
+					'audio' => array( 'dashicons-format-audio', __( 'אודיו', 'hadashot-mercaz' ), 'hm-badge-audio' ),
+					'video' => array( 'dashicons-format-video', __( 'וידאו', 'hadashot-mercaz' ), 'hm-badge-video' ),
+				);
+				$info = isset( $map[ $type ] ) ? $map[ $type ] : $map['text'];
+				printf(
+					'<span class="hm-badge %s dashicons %s" title="%s"></span> %s',
+					esc_attr( $info[2] ),
+					esc_attr( $info[0] ),
+					esc_attr( $info[1] ),
+					esc_html( $info[1] )
+				);
 				break;
 		}
 	}
@@ -122,7 +81,7 @@ class HM_Admin {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			return;
 		}
-		wp_add_dashboard_widget( 'hm_updates_dashboard', __( '📰 עדכוני חדשות אחרונים', 'hadashot-mercaz' ), array( $this, 'render_dashboard_widget' ) );
+		wp_add_dashboard_widget( 'hm_updates_dashboard', __( 'עדכוני חדשות אחרונים', 'hadashot-mercaz' ), array( $this, 'render_dashboard_widget' ) );
 	}
 
 	public function render_dashboard_widget() {
@@ -140,7 +99,7 @@ class HM_Admin {
 			foreach ( $updates as $update ) {
 				printf(
 					'<li><a href="%s">%s</a><span class="hm-dash-date">%s</span></li>',
-					esc_url( get_edit_post_link( $update->ID ) ),
+					esc_url( HM_Update_Editor::get_edit_url( $update->ID ) ),
 					esc_html( get_the_title( $update ) ),
 					esc_html( get_the_date( '', $update ) )
 				);
@@ -149,7 +108,7 @@ class HM_Admin {
 		}
 		printf(
 			'<p class="hm-dashboard-actions"><a class="button button-primary" href="%s">%s</a> <a class="button" href="%s">%s</a></p>',
-			esc_url( admin_url( 'post-new.php?post_type=' . HM_UPDATES_POST_TYPE ) ),
+			esc_url( HM_Update_Editor::get_new_url() ),
 			esc_html__( 'עדכון חדש', 'hadashot-mercaz' ),
 			esc_url( admin_url( 'edit.php?post_type=' . HM_UPDATES_POST_TYPE ) ),
 			esc_html__( 'לכל העדכונים', 'hadashot-mercaz' )
@@ -161,7 +120,7 @@ class HM_Admin {
 		add_submenu_page(
 			'edit.php?post_type=' . HM_UPDATES_POST_TYPE,
 			__( 'מדריך שימוש', 'hadashot-mercaz' ),
-			__( '💡 מדריך שימוש', 'hadashot-mercaz' ),
+			__( 'מדריך שימוש', 'hadashot-mercaz' ),
 			'edit_posts',
 			'hm-updates-guide',
 			array( $this, 'render_help_page' )
@@ -171,13 +130,13 @@ class HM_Admin {
 	public function render_help_page() {
 		?>
 		<div class="wrap hm-guide-wrap">
-			<h1><?php esc_html_e( '💡 מדריך שימוש – עדכוני חדשות מקצועיים', 'hadashot-mercaz' ); ?></h1>
+			<h1><?php esc_html_e( 'מדריך שימוש – עדכוני חדשות מקצועיים', 'hadashot-mercaz' ); ?></h1>
 
 			<div class="hm-guide-grid">
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-megaphone"></div>
 					<h2><?php esc_html_e( '1. יצירת עדכונים', 'hadashot-mercaz' ); ?></h2>
-					<p><?php esc_html_e( 'עברו ל"כל העדכונים" ולחצו על "הוספת עדכון". מסך קליל ומהיר: כותרת, טקסט, תמונה ראשית, קטגוריה, ואם רוצים – אודיו ו/או וידאו בתיבת המדיה. בלי בונה עמודים ובלי בלוקים.', 'hadashot-mercaz' ); ?></p>
+					<p><?php esc_html_e( 'עברו ל"כל העדכונים" ולחצו על "הוספת עדכון". בוחרים סוג עדכון אחד — טקסט, אודיו או וידאו — ומזינים רק את מה שרלוונטי. מסך קליל אחד, בלי בונה עמודים ובלי בלוקים.', 'hadashot-mercaz' ); ?></p>
 				</div>
 				<div class="hm-guide-card">
 					<div class="hm-guide-icon dashicons dashicons-category"></div>
@@ -212,20 +171,5 @@ class HM_Admin {
 			</div>
 		</div>
 		<?php
-	}
-
-	public function updated_messages( $messages ) {
-		global $post;
-		$messages[ HM_UPDATES_POST_TYPE ] = array(
-			0  => '',
-			1  => __( 'העדכון עודכן בהצלחה.', 'hadashot-mercaz' ),
-			4  => __( 'העדכון עודכן.', 'hadashot-mercaz' ),
-			6  => __( 'העדכון פורסם בהצלחה.', 'hadashot-mercaz' ),
-			7  => __( 'העדכון נשמר.', 'hadashot-mercaz' ),
-			8  => __( 'העדכון נשלח לבדיקה.', 'hadashot-mercaz' ),
-			9  => __( 'העדכון תוזמן לפרסום.', 'hadashot-mercaz' ),
-			10 => __( 'טיוטת העדכון עודכנה.', 'hadashot-mercaz' ),
-		);
-		return $messages;
 	}
 }
