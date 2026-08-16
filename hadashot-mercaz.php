@@ -2,7 +2,7 @@
 /**
  * Plugin Name: חדשות מרכז – עדכוני חדשות מקצועיים
  * Description: ניהול עדכוני חדשות מקצועיים (טקסט, תמונה, אודיו ווידאו) עם ווידג'ט אלמנטור מלא עיצוב לתצוגה במגוון פריסות.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Hadashot Mercaz
  * Text Domain: hadashot-mercaz
  * Domain Path: /languages
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'HM_UPDATES_VERSION', '1.2.0' );
+define( 'HM_UPDATES_VERSION', '1.3.0' );
 define( 'HM_UPDATES_FILE', __FILE__ );
 define( 'HM_UPDATES_DIR', plugin_dir_path( __FILE__ ) );
 define( 'HM_UPDATES_URL', plugin_dir_url( __FILE__ ) );

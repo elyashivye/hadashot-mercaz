@@ -37,6 +37,7 @@ jQuery( function ( $ ) {
 			$( this ).prop( 'hidden', ! isActive );
 			$( this ).find( 'input, textarea' ).prop( 'disabled', ! isActive );
 		} );
+		$( '.hm-ed-featured-hint' ).prop( 'hidden', 'image' !== type );
 		positionIndicator();
 	}
 
@@ -131,7 +132,7 @@ jQuery( function ( $ ) {
 
 	var featuredFrame;
 
-	$( '#hm-ed-choose-featured' ).on( 'click', function ( e ) {
+	$( '.hm-ed-choose-featured-trigger' ).on( 'click', function ( e ) {
 		e.preventDefault();
 
 		featuredFrame = wp.media( {
@@ -145,17 +146,17 @@ jQuery( function ( $ ) {
 			var attachment = featuredFrame.state().get( 'selection' ).first().toJSON();
 			var url = attachment.sizes && attachment.sizes.medium ? attachment.sizes.medium.url : attachment.url;
 			$( '#hm-ed-featured-id' ).val( attachment.id );
-			$( '#hm-ed-featured-preview' ).html( $( '<img>' ).attr( 'src', url ) );
-			$( '#hm-ed-remove-featured' ).prop( 'hidden', false );
+			$( '.hm-ed-featured-mirror' ).html( $( '<img>' ).attr( 'src', url ) );
+			$( '.hm-ed-remove-featured-trigger' ).prop( 'hidden', false );
 		} );
 
 		featuredFrame.open();
 	} );
 
-	$( '#hm-ed-remove-featured' ).on( 'click', function ( e ) {
+	$( '.hm-ed-remove-featured-trigger' ).on( 'click', function ( e ) {
 		e.preventDefault();
 		$( '#hm-ed-featured-id' ).val( '' );
-		$( '#hm-ed-featured-preview' ).html( '' );
-		$( this ).prop( 'hidden', true );
+		$( '.hm-ed-featured-mirror' ).html( '' );
+		$( '.hm-ed-remove-featured-trigger' ).prop( 'hidden', true );
 	} );
 } );

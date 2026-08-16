@@ -54,6 +54,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span><?php esc_html_e( 'טקסט', 'hadashot-mercaz' ); ?></span>
 					</label>
 
+					<label class="hm-ed-type-option" data-type="image">
+						<input type="radio" name="hm_update_type" value="image" <?php checked( $type, 'image' ); ?>>
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 16l4.5-5 4 4L17 10l3 3M4 6h16v12H4V6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+						<span><?php esc_html_e( 'תמונה', 'hadashot-mercaz' ); ?></span>
+					</label>
+
 					<label class="hm-ed-type-option" data-type="audio">
 						<input type="radio" name="hm_update_type" value="audio" <?php checked( $type, 'audio' ); ?>>
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18V5l10-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0zM19 16a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -72,6 +78,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="hm-ed-textarea-meta"><span id="hm-ed-word-count">0</span> <?php esc_html_e( 'מילים', 'hadashot-mercaz' ); ?></div>
 				</div>
 
+				<div class="hm-ed-panel" data-panel="image" <?php echo 'image' === $type ? '' : 'hidden'; ?>>
+					<div class="hm-ed-image-drop hm-ed-image-drop-large hm-ed-featured-mirror">
+						<?php if ( $thumb_url ) : ?>
+							<img src="<?php echo esc_url( $thumb_url ); ?>" alt="">
+						<?php else : ?>
+							<span class="hm-ed-image-drop-empty">
+								<svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 16l4.5-5 4 4L17 10l3 3M4 6h16v12H4V6z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+								<?php esc_html_e( 'זו התמונה שתופיע בפופ-אפ', 'hadashot-mercaz' ); ?>
+							</span>
+						<?php endif; ?>
+					</div>
+					<div class="hm-ed-card-actions">
+						<button type="button" class="hm-ed-btn hm-ed-btn-ghost hm-ed-choose-featured-trigger"><?php esc_html_e( 'בחירת תמונה', 'hadashot-mercaz' ); ?></button>
+						<button type="button" class="hm-ed-btn hm-ed-btn-text hm-ed-remove-featured-trigger" <?php echo $thumb_url ? '' : 'hidden'; ?>><?php esc_html_e( 'הסרה', 'hadashot-mercaz' ); ?></button>
+					</div>
+				</div>
+
 				<div class="hm-ed-panel" data-panel="audio" <?php echo 'audio' === $type ? '' : 'hidden'; ?>>
 					<?php $this->render_media_panel( 'audio', 'audio' === $type ? $source : 'upload', 'audio' === $type ? $attachment_id : 0, 'audio' === $type ? $attachment_url : '', 'audio' === $type ? $attachment_name : '', 'audio' === $type ? $embed_url : '' ); ?>
 				</div>
@@ -87,9 +110,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</main>
 
 			<aside class="hm-ed-side">
-				<div class="hm-ed-card">
+				<div class="hm-ed-card" data-featured-card>
 					<h3><?php esc_html_e( 'תמונה ראשית', 'hadashot-mercaz' ); ?></h3>
-					<div class="hm-ed-image-drop" id="hm-ed-featured-preview">
+					<p class="hm-ed-empty-note hm-ed-featured-hint" <?php echo 'image' === $type ? '' : 'hidden'; ?>><?php esc_html_e( 'עדכון מסוג תמונה משתמש בתמונה הזו כתוכן.', 'hadashot-mercaz' ); ?></p>
+					<div class="hm-ed-image-drop hm-ed-featured-mirror">
 						<?php if ( $thumb_url ) : ?>
 							<img src="<?php echo esc_url( $thumb_url ); ?>" alt="">
 						<?php else : ?>
@@ -100,8 +124,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 					<input type="hidden" name="hm_featured_image_id" id="hm-ed-featured-id" value="<?php echo esc_attr( $thumb_id ); ?>">
 					<div class="hm-ed-card-actions">
-						<button type="button" class="hm-ed-btn hm-ed-btn-ghost hm-ed-btn-small" id="hm-ed-choose-featured"><?php esc_html_e( 'בחירת תמונה', 'hadashot-mercaz' ); ?></button>
-						<button type="button" class="hm-ed-btn hm-ed-btn-text hm-ed-btn-small" id="hm-ed-remove-featured" <?php echo $thumb_url ? '' : 'hidden'; ?>><?php esc_html_e( 'הסרה', 'hadashot-mercaz' ); ?></button>
+						<button type="button" class="hm-ed-btn hm-ed-btn-ghost hm-ed-btn-small hm-ed-choose-featured-trigger"><?php esc_html_e( 'בחירת תמונה', 'hadashot-mercaz' ); ?></button>
+						<button type="button" class="hm-ed-btn hm-ed-btn-text hm-ed-btn-small hm-ed-remove-featured-trigger" <?php echo $thumb_url ? '' : 'hidden'; ?>><?php esc_html_e( 'הסרה', 'hadashot-mercaz' ); ?></button>
 					</div>
 				</div>
 

@@ -1,66 +1,9 @@
 /* Hadashot Mercaz – styling for our controls inside the Elementor panel */
 
-.hm-panel-slot-cards {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	margin: 4px 0;
-}
-
-.hm-panel-slot-card {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	background: #f1f2f4;
-	border-radius: 6px;
-	padding: 8px 10px;
-}
-
-.hm-panel-slot-card-title {
-	flex: 0 0 auto;
-	font-size: 11px;
-	font-weight: 600;
-	color: #6d7882;
-	min-width: 90px;
-}
-
-.hm-panel-slot-card-body {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 12px;
-	color: #3f444b;
-}
-
-.hm-panel-slot-card-body img {
-	width: 32px;
-	height: 32px;
-	border-radius: 4px;
-	object-fit: cover;
-	display: block;
-}
-
-.hm-panel-slot-video-icon {
-	width: 32px;
-	height: 32px;
-	border-radius: 4px;
-	background: #495157;
-	color: #fff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 12px;
-}
-
-.hm-panel-slot-empty {
-	color: #a4afb7;
-	font-style: italic;
-}
-
 .hm-panel-slot-edit-link {
 	display: inline-block;
 	text-align: center;
-	background: #4054b2;
+	background: #d6432b;
 	color: #fff !important;
 	border-radius: 6px;
 	padding: 8px 10px;
@@ -69,10 +12,5 @@
 }
 
 .hm-panel-slot-edit-link:hover {
-	background: #333e8e;
-}
-
-.hm-elementor-notice {
-	font-size: 12px;
-	margin-bottom: 6px;
+	background: #b8371f;
 }

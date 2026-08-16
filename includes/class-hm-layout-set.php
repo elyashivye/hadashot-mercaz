@@ -79,11 +79,15 @@ class HM_Layout_Set {
 
 	public function enqueue( $hook ) {
 		global $post_type;
-		if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) || HM_LAYOUT_SET_POST_TYPE !== $post_type ) {
+		if ( HM_LAYOUT_SET_POST_TYPE !== $post_type ) {
+			return;
+		}
+		wp_enqueue_style( 'hm-admin', HM_UPDATES_URL . 'assets/css/admin.css', array(), HM_UPDATES_VERSION );
+
+		if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
 			return;
 		}
 		wp_enqueue_media();
-		wp_enqueue_style( 'hm-admin', HM_UPDATES_URL . 'assets/css/admin.css', array(), HM_UPDATES_VERSION );
 		wp_enqueue_style( 'hm-admin-layout-set', HM_UPDATES_URL . 'assets/css/admin-layout-set.css', array( 'hm-admin' ), HM_UPDATES_VERSION );
 		wp_enqueue_script( 'hm-admin-layout-set', HM_UPDATES_URL . 'assets/js/admin-layout-set.js', array( 'jquery' ), HM_UPDATES_VERSION, true );
 		wp_localize_script( 'hm-admin-layout-set', 'hmSlotL10n', array(
@@ -205,14 +209,36 @@ class HM_Layout_Set {
 		}
 
 		foreach ( array( 'right', 'left' ) as $side ) {
-			update_post_meta( $post_id, "_hm_slot_{$side}_type", isset( $_POST[ "hm_slot_{$side}_type" ] ) ? sanitize_key( $_POST[ "hm_slot_{$side}_type" ] ) : 'image' );
-			update_post_meta( $post_id, "_hm_slot_{$side}_image_id", isset( $_POST[ "hm_slot_{$side}_image_id" ] ) ? absint( $_POST[ "hm_slot_{$side}_image_id" ] ) : 0 );
-			update_post_meta( $post_id, "_hm_slot_{$side}_video_type", isset( $_POST[ "hm_slot_{$side}_video_type" ] ) ? sanitize_key( $_POST[ "hm_slot_{$side}_video_type" ] ) : 'upload' );
-			update_post_meta( $post_id, "_hm_slot_{$side}_video_id", isset( $_POST[ "hm_slot_{$side}_video_id" ] ) ? absint( $_POST[ "hm_slot_{$side}_video_id" ] ) : 0 );
-			update_post_meta( $post_id, "_hm_slot_{$side}_video_url", isset( $_POST[ "hm_slot_{$side}_video_url" ] ) ? esc_url_raw( $_POST[ "hm_slot_{$side}_video_url" ] ) : '' );
-			update_post_meta( $post_id, "_hm_slot_{$side}_autoplay", isset( $_POST[ "hm_slot_{$side}_autoplay" ] ) ? 'yes' : 'no' );
-			update_post_meta( $post_id, "_hm_slot_{$side}_link", isset( $_POST[ "hm_slot_{$side}_link" ] ) ? esc_url_raw( $_POST[ "hm_slot_{$side}_link" ] ) : '' );
+			self::save_slot( $post_id, $side, array(
+				'type'       => isset( $_POST[ "hm_slot_{$side}_type" ] ) ? $_POST[ "hm_slot_{$side}_type" ] : 'image',
+				'image_id'   => isset( $_POST[ "hm_slot_{$side}_image_id" ] ) ? $_POST[ "hm_slot_{$side}_image_id" ] : 0,
+				'video_type' => isset( $_POST[ "hm_slot_{$side}_video_type" ] ) ? $_POST[ "hm_slot_{$side}_video_type" ] : 'upload',
+				'video_id'   => isset( $_POST[ "hm_slot_{$side}_video_id" ] ) ? $_POST[ "hm_slot_{$side}_video_id" ] : 0,
+				'video_url'  => isset( $_POST[ "hm_slot_{$side}_video_url" ] ) ? $_POST[ "hm_slot_{$side}_video_url" ] : '',
+				'autoplay'   => isset( $_POST[ "hm_slot_{$side}_autoplay" ] ),
+				'link'       => isset( $_POST[ "hm_slot_{$side}_link" ] ) ? $_POST[ "hm_slot_{$side}_link" ] : '',
+			) );
 		}
+	}
+
+	/**
+	 * Normalizes and persists one slot's meta. Shared by the wp-admin
+	 * metabox save and the Elementor after-save sync, so the two editing
+	 * surfaces always write through the exact same rules.
+	 */
+	public static function save_slot( $set_id, $side, array $values ) {
+		$set_id = absint( $set_id );
+		if ( ! $set_id || ! in_array( $side, array( 'right', 'left' ), true ) ) {
+			return;
+		}
+
+		update_post_meta( $set_id, "_hm_slot_{$side}_type", 'video' === ( $values['type'] ?? '' ) ? 'video' : 'image' );
+		update_post_meta( $set_id, "_hm_slot_{$side}_image_id", absint( $values['image_id'] ?? 0 ) );
+		update_post_meta( $set_id, "_hm_slot_{$side}_video_type", 'embed' === ( $values['video_type'] ?? '' ) ? 'embed' : 'upload' );
+		update_post_meta( $set_id, "_hm_slot_{$side}_video_id", absint( $values['video_id'] ?? 0 ) );
+		update_post_meta( $set_id, "_hm_slot_{$side}_video_url", esc_url_raw( wp_unslash( (string) ( $values['video_url'] ?? '' ) ) ) );
+		update_post_meta( $set_id, "_hm_slot_{$side}_autoplay", ! empty( $values['autoplay'] ) ? 'yes' : 'no' );
+		update_post_meta( $set_id, "_hm_slot_{$side}_link", esc_url_raw( wp_unslash( (string) ( $values['link'] ?? '' ) ) ) );
 	}
 
 	public function columns( $columns ) {
@@ -311,46 +337,4 @@ class HM_Layout_Set {
 		return $data;
 	}
 
-	public static function render_admin_preview_html( $set_id ) {
-		$right     = self::get_slot( $set_id, 'right' );
-		$left      = self::get_slot( $set_id, 'left' );
-		$edit_url  = get_edit_post_link( $set_id );
-
-		ob_start();
-		?>
-		<div class="hm-panel-slot-cards">
-			<?php foreach ( array( 'right' => array( __( 'עמודת מדיה ימין', 'hadashot-mercaz' ), $right ), 'left' => array( __( 'עמודת מדיה שמאל', 'hadashot-mercaz' ), $left ) ) as $side => $pair ) : ?>
-				<?php list( $label, $slot ) = $pair; ?>
-				<div class="hm-panel-slot-card">
-					<div class="hm-panel-slot-card-title"><?php echo esc_html( $label ); ?></div>
-					<div class="hm-panel-slot-card-body">
-						<?php if ( ! $slot ) : ?>
-							<span class="hm-panel-slot-empty"><?php esc_html_e( 'ריק', 'hadashot-mercaz' ); ?></span>
-						<?php elseif ( 'image' === $slot['type'] ) : ?>
-							<img src="<?php echo esc_url( $slot['url'] ); ?>" alt="">
-							<span><?php esc_html_e( 'תמונה', 'hadashot-mercaz' ); ?></span>
-						<?php else : ?>
-							<span class="hm-panel-slot-video-icon">▶</span>
-							<span>
-								<?php
-								if ( $slot['is_embed'] ) {
-									esc_html_e( 'וידאו (קישור) — בלחיצה', 'hadashot-mercaz' );
-								} elseif ( $slot['autoplay'] ) {
-									esc_html_e( 'וידאו — אוטומטי', 'hadashot-mercaz' );
-								} else {
-									esc_html_e( 'וידאו — בלחיצה', 'hadashot-mercaz' );
-								}
-								?>
-							</span>
-						<?php endif; ?>
-					</div>
-				</div>
-			<?php endforeach; ?>
-			<a class="hm-panel-slot-edit-link" href="<?php echo esc_url( $edit_url ); ?>" target="_blank" rel="noopener">
-				<?php esc_html_e( '✎ עריכת תוכן הערכה', 'hadashot-mercaz' ); ?>
-			</a>
-		</div>
-		<?php
-		return ob_get_clean();
-	}
 }

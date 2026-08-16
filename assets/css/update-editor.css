@@ -488,6 +488,22 @@
 
 .hm-ed-image-drop-empty {
 	color: var(--hm-faint);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	text-align: center;
+	padding: 0 20px;
+}
+
+.hm-ed-image-drop-large {
+	aspect-ratio: 21 / 9;
+	margin-bottom: 16px;
+}
+
+.hm-ed-featured-hint {
+	margin: -6px 0 10px;
 }
 
 .hm-ed-card-actions {

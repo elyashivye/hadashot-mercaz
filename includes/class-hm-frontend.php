@@ -70,11 +70,12 @@ class HM_Frontend {
 	}
 
 	/**
-	 * An update is exclusively text, audio, or video — never a combination.
+	 * An update is exclusively text, image, audio, or video — never a
+	 * combination.
 	 */
 	public static function get_update_type( $post_id ) {
 		$type = get_post_meta( $post_id, '_hm_update_type', true );
-		return in_array( $type, array( 'text', 'audio', 'video' ), true ) ? $type : 'text';
+		return in_array( $type, array( 'text', 'image', 'audio', 'video' ), true ) ? $type : 'text';
 	}
 
 	public static function has_audio( $post_id ) {

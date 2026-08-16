@@ -62,6 +62,7 @@ class HM_Admin {
 				$type = HM_Frontend::get_update_type( $post_id );
 				$map  = array(
 					'text'  => array( 'dashicons-text-page', __( 'טקסט', 'hadashot-mercaz' ), 'hm-badge-text' ),
+					'image' => array( 'dashicons-format-image', __( 'תמונה', 'hadashot-mercaz' ), 'hm-badge-image' ),
 					'audio' => array( 'dashicons-format-audio', __( 'אודיו', 'hadashot-mercaz' ), 'hm-badge-audio' ),
 					'video' => array( 'dashicons-format-video', __( 'וידאו', 'hadashot-mercaz' ), 'hm-badge-video' ),
 				);

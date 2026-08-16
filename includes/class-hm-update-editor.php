@@ -116,7 +116,7 @@ class HM_Update_Editor {
 		}
 
 		$type = isset( $_POST['hm_update_type'] ) ? sanitize_key( wp_unslash( $_POST['hm_update_type'] ) ) : 'text';
-		if ( ! in_array( $type, array( 'text', 'audio', 'video' ), true ) ) {
+		if ( ! in_array( $type, array( 'text', 'image', 'audio', 'video' ), true ) ) {
 			$type = 'text';
 		}
 
@@ -147,7 +147,7 @@ class HM_Update_Editor {
 
 		update_post_meta( $post_id, '_hm_update_type', $type );
 
-		if ( 'text' === $type ) {
+		if ( 'audio' !== $type && 'video' !== $type ) {
 			delete_post_meta( $post_id, '_hm_media_source' );
 			delete_post_meta( $post_id, '_hm_media_attachment_id' );
 			delete_post_meta( $post_id, '_hm_media_embed_url' );

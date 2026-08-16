@@ -1,11 +1,116 @@
-/* Hadashot Mercaz – Professional Updates: admin styles */
+/* Hadashot Mercaz – Professional Updates: admin styles
+ * Shared palette with the update editor: warm paper ground, ink,
+ * a single "on-air" signal accent.
+ */
 
-/* List table */
+body.post-type-hm_update,
+body.post-type-hm_layout_set {
+	background: #f6f4ef;
+}
+
+/* ------------------------------------------------------------------ */
+/* List table                                                          */
+/* ------------------------------------------------------------------ */
+
+body.post-type-hm_update .wrap,
+body.post-type-hm_layout_set .wrap {
+	max-width: 1200px;
+}
+
+body.post-type-hm_update .wp-heading-inline,
+body.post-type-hm_layout_set .wp-heading-inline {
+	font-size: 22px;
+	font-weight: 700;
+	color: #14171c;
+}
+
+body.post-type-hm_update .page-title-action,
+body.post-type-hm_layout_set .page-title-action {
+	background: #d6432b;
+	border-color: #d6432b;
+	color: #fff;
+	border-radius: 999px;
+	padding: 4px 18px;
+	font-weight: 600;
+	box-shadow: none;
+	text-shadow: none;
+}
+
+body.post-type-hm_update .page-title-action:hover,
+body.post-type-hm_layout_set .page-title-action:hover {
+	background: #b8371f;
+	border-color: #b8371f;
+	color: #fff;
+}
+
+body.post-type-hm_update .subsubsub,
+body.post-type-hm_layout_set .subsubsub {
+	margin-bottom: 10px;
+}
+
+body.post-type-hm_update .tablenav.top,
+body.post-type-hm_layout_set .tablenav.top {
+	margin-bottom: 12px;
+}
+
+body.post-type-hm_update .wp-list-table,
+body.post-type-hm_layout_set .wp-list-table {
+	border: 1px solid #e6e2d8;
+	border-radius: 14px;
+	overflow: hidden;
+	box-shadow: 0 1px 2px rgba(20, 23, 28, .04);
+}
+
+body.post-type-hm_update .wp-list-table thead th,
+body.post-type-hm_update .wp-list-table thead td,
+body.post-type-hm_layout_set .wp-list-table thead th,
+body.post-type-hm_layout_set .wp-list-table thead td {
+	background: #14171c;
+	color: rgba(255, 255, 255, .85);
+	border: 0;
+	font-weight: 600;
+}
+
+body.post-type-hm_update .wp-list-table thead th a,
+body.post-type-hm_layout_set .wp-list-table thead th a {
+	color: rgba(255, 255, 255, .85);
+}
+
+body.post-type-hm_update .wp-list-table thead th.sorted a,
+body.post-type-hm_layout_set .wp-list-table thead th.sorted a {
+	color: #fff;
+}
+
+body.post-type-hm_update .wp-list-table tbody tr,
+body.post-type-hm_layout_set .wp-list-table tbody tr {
+	background: #fff;
+}
+
+body.post-type-hm_update .wp-list-table tbody tr:hover,
+body.post-type-hm_layout_set .wp-list-table tbody tr:hover {
+	background: #fbe7e2;
+}
+
+body.post-type-hm_update .wp-list-table .row-title,
+body.post-type-hm_layout_set .wp-list-table .row-title {
+	color: #14171c;
+	font-weight: 600;
+}
+
+body.post-type-hm_update .wp-list-table .row-title:hover,
+body.post-type-hm_layout_set .wp-list-table .row-title:hover {
+	color: #d6432b;
+}
+
 .column-hm_thumb {
 	width: 60px;
 }
 
 .column-hm_type {
+	width: 110px;
+}
+
+.column-hm_slots_preview {
 	width: 110px;
 }
 
@@ -33,6 +138,11 @@
 	color: #50575e;
 }
 
+.hm-badge-image {
+	background: #eef1fb;
+	color: #3a4a9c;
+}
+
 .hm-badge-audio {
 	background: #eaf3ff;
 	color: #2271b1;
@@ -47,7 +157,10 @@
 	color: #c3c4c7;
 }
 
-/* Dashboard widget */
+/* ------------------------------------------------------------------ */
+/* Dashboard widget                                                     */
+/* ------------------------------------------------------------------ */
+
 .hm-dashboard-widget .hm-dashboard-list {
 	margin: 0;
 }
@@ -75,11 +188,34 @@
 	gap: 8px;
 }
 
-/* Help / guide page */
+.hm-dashboard-actions .button-primary {
+	background: #d6432b;
+	border-color: #d6432b;
+	box-shadow: none;
+	text-shadow: none;
+}
+
+.hm-dashboard-actions .button-primary:hover {
+	background: #b8371f;
+	border-color: #b8371f;
+}
+
+/* ------------------------------------------------------------------ */
+/* Help / guide page                                                    */
+/* ------------------------------------------------------------------ */
+
+.hm-guide-wrap {
+	background: #f6f4ef;
+	margin-inline-end: 20px;
+	padding: 24px 24px 8px;
+	border-radius: 16px;
+}
+
 .hm-guide-wrap h1 {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	color: #14171c;
 }
 
 .hm-guide-grid {
@@ -91,18 +227,18 @@
 
 .hm-guide-card {
 	background: #fff;
-	border: 1px solid #e2e4e7;
-	border-radius: 12px;
+	border: 1px solid #e6e2d8;
+	border-radius: 14px;
 	padding: 22px;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+	box-shadow: 0 1px 2px rgba(20, 23, 28, .04);
 }
 
 .hm-guide-icon {
 	width: 44px;
 	height: 44px;
 	border-radius: 10px;
-	background: #f0f6fc;
-	color: #2271b1;
+	background: #fbe7e2;
+	color: #d6432b;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -113,10 +249,11 @@
 .hm-guide-card h2 {
 	margin: 0 0 8px;
 	font-size: 16px;
+	color: #14171c;
 }
 
 .hm-guide-card p {
 	margin: 0;
-	color: #50575e;
+	color: #726c60;
 	line-height: 1.6;
 }
