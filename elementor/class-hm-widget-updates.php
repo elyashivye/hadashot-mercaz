@@ -1204,10 +1204,47 @@ class HM_Widget_Updates extends Widget_Base {
 	/* ------------------------------------------------------------------ */
 
 	/**
-	 * Builds the same shape HM_Layout_Set::get_slot() returns, but from this
-	 * widget instance's own live settings — the accordion controls are the
-	 * source of truth at render time, whether or not they were originally
-	 * pre-filled from a linked Layout Set.
+	 * Whether we're currently rendering inside Elementor's own editor/
+	 * preview (as opposed to a real, public page view).
+	 */
+	public function is_elementor_editing_context() {
+		if ( ! class_exists( '\Elementor\Plugin' ) ) {
+			return false;
+		}
+		$plugin = \Elementor\Plugin::instance();
+		return ( isset( $plugin->editor ) && $plugin->editor->is_edit_mode() )
+			|| ( isset( $plugin->preview ) && $plugin->preview->is_preview_mode() );
+	}
+
+	/**
+	 * Decides where a slot's content comes from. This is what makes the
+	 * two editing surfaces feel "live" without any push/polling machinery:
+	 *
+	 * - Linked to a Layout Set, on a real page view (not the Elementor
+	 *   editor): always read straight from HM_Slot_Sync's table, live —
+	 *   so an edit made in wp-admin shows up on the site immediately,
+	 *   with no need to reopen or resave the Elementor page.
+	 * - Linked, but inside the Elementor editor/preview right now: use
+	 *   this widget instance's own settings, so typing in the accordion
+	 *   updates the preview instantly instead of being masked by
+	 *   whatever the table currently holds.
+	 * - Not linked to any set: always use this widget's own settings —
+	 *   there is nothing external to defer to.
+	 */
+	public function resolve_slot( array $settings, $side ) {
+		$set_id = ! empty( $settings['layout_set_id'] ) ? $settings['layout_set_id'] : '';
+
+		if ( $set_id && ! $this->is_elementor_editing_context() && class_exists( 'HM_Slot_Sync' ) ) {
+			return HM_Slot_Sync::get_slot( $set_id, $side );
+		}
+
+		return $this->build_slot_from_settings( $settings, $side );
+	}
+
+	/**
+	 * Builds the same shape HM_Slot_Sync::get_slot() returns, but from this
+	 * widget instance's own live settings — used directly while editing in
+	 * Elementor, and as the fallback for widgets not linked to any set.
 	 */
 	public function build_slot_from_settings( array $settings, $side ) {
 		$type = ! empty( $settings[ "slot_{$side}_type" ] ) && 'video' === $settings[ "slot_{$side}_type" ] ? 'video' : 'image';

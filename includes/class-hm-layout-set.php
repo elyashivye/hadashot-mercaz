@@ -133,15 +133,14 @@ class HM_Layout_Set {
 	}
 
 	private function render_slot( $post_id, $side, $label ) {
-		$type       = get_post_meta( $post_id, "_hm_slot_{$side}_type", true );
-		$type       = $type ? $type : 'image';
-		$image_id   = absint( get_post_meta( $post_id, "_hm_slot_{$side}_image_id", true ) );
-		$video_type = get_post_meta( $post_id, "_hm_slot_{$side}_video_type", true );
-		$video_type = $video_type ? $video_type : 'upload';
-		$video_id   = absint( get_post_meta( $post_id, "_hm_slot_{$side}_video_id", true ) );
-		$video_url  = get_post_meta( $post_id, "_hm_slot_{$side}_video_url", true );
-		$autoplay   = 'yes' === get_post_meta( $post_id, "_hm_slot_{$side}_autoplay", true );
-		$link       = get_post_meta( $post_id, "_hm_slot_{$side}_link", true );
+		$raw        = HM_Slot_Sync::get_raw( $post_id, $side );
+		$type       = $raw['type'];
+		$image_id   = absint( $raw['image_id'] );
+		$video_type = $raw['video_type'];
+		$video_id   = absint( $raw['video_id'] );
+		$video_url  = $raw['video_url'];
+		$autoplay   = ! empty( $raw['autoplay'] );
+		$link       = $raw['link'];
 		?>
 		<div class="hm-set-slot" data-slot="<?php echo esc_attr( $side ); ?>">
 			<div class="hm-set-slot-label"><?php echo esc_html( $label ); ?></div>
@@ -222,23 +221,14 @@ class HM_Layout_Set {
 	}
 
 	/**
-	 * Normalizes and persists one slot's meta. Shared by the wp-admin
-	 * metabox save and the Elementor after-save sync, so the two editing
-	 * surfaces always write through the exact same rules.
+	 * Persists one slot. Both the wp-admin metabox save and the Elementor
+	 * after-save sync hook call this, which itself just delegates to
+	 * HM_Slot_Sync — the one real database table both editing surfaces
+	 * read from and write to, so there is nothing to keep in sync beyond
+	 * "always read live from the table."
 	 */
 	public static function save_slot( $set_id, $side, array $values ) {
-		$set_id = absint( $set_id );
-		if ( ! $set_id || ! in_array( $side, array( 'right', 'left' ), true ) ) {
-			return;
-		}
-
-		update_post_meta( $set_id, "_hm_slot_{$side}_type", 'video' === ( $values['type'] ?? '' ) ? 'video' : 'image' );
-		update_post_meta( $set_id, "_hm_slot_{$side}_image_id", absint( $values['image_id'] ?? 0 ) );
-		update_post_meta( $set_id, "_hm_slot_{$side}_video_type", 'embed' === ( $values['video_type'] ?? '' ) ? 'embed' : 'upload' );
-		update_post_meta( $set_id, "_hm_slot_{$side}_video_id", absint( $values['video_id'] ?? 0 ) );
-		update_post_meta( $set_id, "_hm_slot_{$side}_video_url", esc_url_raw( wp_unslash( (string) ( $values['video_url'] ?? '' ) ) ) );
-		update_post_meta( $set_id, "_hm_slot_{$side}_autoplay", ! empty( $values['autoplay'] ) ? 'yes' : 'no' );
-		update_post_meta( $set_id, "_hm_slot_{$side}_link", esc_url_raw( wp_unslash( (string) ( $values['link'] ?? '' ) ) ) );
+		HM_Slot_Sync::save_slot( $set_id, $side, $values );
 	}
 
 	public function columns( $columns ) {
@@ -288,53 +278,11 @@ class HM_Layout_Set {
 	}
 
 	/**
-	 * Resolved slot data ready for rendering, or null when the slot is empty.
+	 * Resolved slot data ready for rendering, or null when the slot is
+	 * empty. Delegates to HM_Slot_Sync, which always reads the current
+	 * database row — never a cached copy.
 	 */
 	public static function get_slot( $set_id, $side ) {
-		$set_id = absint( $set_id );
-		if ( ! $set_id ) {
-			return null;
-		}
-
-		$type = get_post_meta( $set_id, "_hm_slot_{$side}_type", true );
-		$type = $type ? $type : 'image';
-
-		$data = array(
-			'type'     => $type,
-			'autoplay' => false,
-			'is_embed' => false,
-			'link'     => get_post_meta( $set_id, "_hm_slot_{$side}_link", true ),
-			'url'      => '',
-		);
-
-		if ( 'image' === $type ) {
-			$image_id = absint( get_post_meta( $set_id, "_hm_slot_{$side}_image_id", true ) );
-			if ( ! $image_id ) {
-				return null;
-			}
-			$data['url'] = wp_get_attachment_image_url( $image_id, 'large' );
-			return $data['url'] ? $data : null;
-		}
-
-		$video_type = get_post_meta( $set_id, "_hm_slot_{$side}_video_type", true );
-
-		if ( 'upload' === $video_type ) {
-			$video_id = absint( get_post_meta( $set_id, "_hm_slot_{$side}_video_id", true ) );
-			if ( ! $video_id ) {
-				return null;
-			}
-			$data['url']      = wp_get_attachment_url( $video_id );
-			$data['autoplay'] = 'yes' === get_post_meta( $set_id, "_hm_slot_{$side}_autoplay", true );
-			return $data['url'] ? $data : null;
-		}
-
-		$url = get_post_meta( $set_id, "_hm_slot_{$side}_video_url", true );
-		if ( ! $url ) {
-			return null;
-		}
-		$data['url']      = $url;
-		$data['is_embed'] = true;
-		return $data;
+		return HM_Slot_Sync::get_slot( $set_id, $side );
 	}
-
 }

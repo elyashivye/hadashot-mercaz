@@ -15,8 +15,8 @@ $enable_popup     = ! empty( $settings['enable_popup'] ) && 'yes' === $settings[
 $post_ids         = array();
 $total_duration   = $item_duration * max( 1, $query->post_count );
 
-$slot_right = $widget->build_slot_from_settings( $settings, 'right' );
-$slot_left  = $widget->build_slot_from_settings( $settings, 'left' );
+$slot_right = $widget->resolve_slot( $settings, 'right' );
+$slot_left  = $widget->resolve_slot( $settings, 'left' );
 ?>
 <div class="hm-widget-root" data-hm-uid="<?php echo esc_attr( $widget_uid ); ?>">
 	<div class="hm-updates-widget hm-layout-split">
